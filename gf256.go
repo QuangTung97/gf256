@@ -71,8 +71,10 @@ func fastMul(a, b uint8) uint8 {
 	aLog := globalLogTable[a]
 	bLog := globalLogTable[b]
 	sum16 := uint16(aLog) + uint16(bLog)
-	sum := uint8(sum16 % 255)
-	return globalExpTable[sum]
+	if sum16 >= 255 {
+		sum16 -= 255
+	}
+	return globalExpTable[sum16]
 }
 
 func computeMulTable() []uint8 {

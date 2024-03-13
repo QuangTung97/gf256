@@ -154,7 +154,8 @@ func BenchmarkFastMultiWithLogTable(b *testing.B) {
 			sum += uint64(s)
 		}
 	}
-	// Result (4 * 2^20) / 6625219 * 1000= 633.08156304 bytes / ns
+	// Result (4 * 2^20) / 6625219 * 1000 = 633.08156304 bytes / ns
+	// New    (4 * 2^20) / 5927338 * 1000 = 707.620182956 bytes / ns
 }
 
 func BenchmarkSimpleMul(b *testing.B) {
