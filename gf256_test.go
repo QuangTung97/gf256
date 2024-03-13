@@ -1,6 +1,7 @@
 package gf256
 
 import (
+	"crypto/sha1"
 	"fmt"
 	"math/bits"
 	"math/rand"
@@ -228,4 +229,22 @@ func BenchmarkTableMul4(b *testing.B) {
 		}
 	}
 	// Result (4 * 2^20) / 4884109 * 1000 = 858.765437053 bytes / ns
+}
+
+func BenchmarkSHA1(b *testing.B) {
+	arr1 := make([]byte, 4<<20)
+
+	r := rand.New(rand.NewSource(1234))
+	for i := range arr1 {
+		arr1[i] = byte(r.Intn(256))
+	}
+
+	b.ResetTimer()
+
+	sum := uint64(0)
+	for n := 0; n < b.N; n++ {
+		s1 := sha1.Sum(arr1)
+		sum += uint64(s1[0])
+	}
+	// Result (4 * 2^20) / 3604295 * 1000 = 1163.69609036 bytes / us
 }
