@@ -74,3 +74,21 @@ func fastMul(a, b uint8) uint8 {
 	sum := uint8(sum16 % 255)
 	return globalExpTable[sum]
 }
+
+func computeMulTable() []uint8 {
+	res := make([]byte, 256*256)
+	for i := 0; i < 256; i++ {
+		for j := 0; j < 256; j++ {
+			res[i*256+j] = simpleMul(uint8(i), uint8(j))
+		}
+	}
+	return res
+}
+
+var globalMulTable = computeMulTable()
+
+func tableMul(a, b uint8) uint8 {
+	i := uint16(a)
+	j := uint16(b)
+	return globalMulTable[i<<8|j]
+}

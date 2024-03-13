@@ -3,6 +3,7 @@ package gf256
 import (
 	"fmt"
 	"math/bits"
+	"math/rand"
 	"strings"
 	"testing"
 
@@ -105,4 +106,92 @@ func TestFastMul_All(t *testing.T) {
 			}
 		}
 	}
+}
+
+func TestTableMul_All(t *testing.T) {
+	for a := 0; a < 256; a++ {
+		for b := 0; b < 256; b++ {
+			x := uint8(a)
+			y := uint8(b)
+
+			v1 := simpleMul(x, y)
+			v2 := tableMul(x, y)
+			if v1 != v2 {
+				t.Errorf("Mismatch x, y = %d %d", x, y)
+				return
+			}
+		}
+	}
+}
+
+func BenchmarkFastMultiWithLogTable(b *testing.B) {
+	arr1 := make([]byte, 4<<20)
+	arr2 := make([]byte, 4<<20)
+
+	r := rand.New(rand.NewSource(1234))
+	for i := range arr1 {
+		arr1[i] = byte(r.Intn(256))
+	}
+	for i := range arr2 {
+		arr2[i] = byte(r.Intn(256))
+	}
+
+	b.ResetTimer()
+
+	sum := uint64(0)
+	for n := 0; n < b.N; n++ {
+		for i, e := range arr1 {
+			s := fastMul(e, arr2[i])
+			sum += uint64(s)
+		}
+	}
+	// Result (4 * 2^20) / 6625219 * 1000= 633.08156304 bytes / ns
+}
+
+func BenchmarkSimpleMul(b *testing.B) {
+	arr1 := make([]byte, 4<<20)
+	arr2 := make([]byte, 4<<20)
+
+	r := rand.New(rand.NewSource(1234))
+	for i := range arr1 {
+		arr1[i] = byte(r.Intn(256))
+	}
+	for i := range arr2 {
+		arr2[i] = byte(r.Intn(256))
+	}
+
+	b.ResetTimer()
+
+	sum := uint64(0)
+	for n := 0; n < b.N; n++ {
+		for i, e := range arr1 {
+			s := simpleMul(e, arr2[i])
+			sum += uint64(s)
+		}
+	}
+	// Result (4 * 2^20) / 219830412 * 1000 = 19.0797258752 bytes / us
+}
+
+func BenchmarkTableMul(b *testing.B) {
+	arr1 := make([]byte, 4<<20)
+	arr2 := make([]byte, 4<<20)
+
+	r := rand.New(rand.NewSource(1234))
+	for i := range arr1 {
+		arr1[i] = byte(r.Intn(256))
+	}
+	for i := range arr2 {
+		arr2[i] = byte(r.Intn(256))
+	}
+
+	b.ResetTimer()
+
+	sum := uint64(0)
+	for n := 0; n < b.N; n++ {
+		for i, e := range arr1 {
+			s := tableMul(e, arr2[i])
+			sum += uint64(s)
+		}
+	}
+	// Result (4 * 2^20) / 3224512 * 1000 = 1300.75620745 bytes / ns
 }
