@@ -92,6 +92,15 @@ func TestFastMul_Ex1(t *testing.T) {
 	assert.Equal(t, simpleMul(2, 13), fastMul(2, 13))
 }
 
+func TestTableMul4(t *testing.T) {
+	res := tableMul4(0x11223344, 0x55667788)
+	assert.Equal(t, uint32(0x72b8ca6d), res)
+	assert.Equal(t, uint8(0x72), simpleMul(0x11, 0x55))
+	assert.Equal(t, uint8(0xb8), simpleMul(0x22, 0x66))
+	assert.Equal(t, uint8(0xca), simpleMul(0x33, 0x77))
+	assert.Equal(t, uint8(0x6d), simpleMul(0x44, 0x88))
+}
+
 func TestFastMul_All(t *testing.T) {
 	for a := 0; a < 256; a++ {
 		for b := 0; b < 256; b++ {
@@ -194,4 +203,28 @@ func BenchmarkTableMul(b *testing.B) {
 		}
 	}
 	// Result (4 * 2^20) / 3224512 * 1000 = 1300.75620745 bytes / ns
+}
+
+func BenchmarkTableMul4(b *testing.B) {
+	arr1 := make([]uint32, 1<<20)
+	arr2 := make([]uint32, 1<<20)
+
+	r := rand.New(rand.NewSource(1234))
+	for i := range arr1 {
+		arr1[i] = uint32(r.Intn(1 << 32))
+	}
+	for i := range arr2 {
+		arr2[i] = uint32(r.Intn(1 << 32))
+	}
+
+	b.ResetTimer()
+
+	sum := uint64(0)
+	for n := 0; n < b.N; n++ {
+		for i, e := range arr1 {
+			s := tableMul4(e, arr2[i])
+			sum += uint64(s)
+		}
+	}
+	// Result (4 * 2^20) / 4884109 * 1000 = 858.765437053 bytes / ns
 }

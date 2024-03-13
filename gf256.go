@@ -92,3 +92,31 @@ func tableMul(a, b uint8) uint8 {
 	j := uint16(b)
 	return globalMulTable[i<<8|j]
 }
+
+func tableMul4(a, b uint32) uint32 {
+	x0 := uint8(a & 0xff)
+	a >>= 8
+	x1 := uint8(a & 0xff)
+	a >>= 8
+	x2 := uint8(a & 0xff)
+	a >>= 8
+	x3 := uint8(a & 0xff)
+
+	y0 := uint8(b & 0xff)
+	b >>= 8
+	y1 := uint8(b & 0xff)
+	b >>= 8
+	y2 := uint8(b & 0xff)
+	b >>= 8
+	y3 := uint8(b & 0xff)
+
+	res := uint32(tableMul(x3, y3))
+	res <<= 8
+	res |= uint32(tableMul(x2, y2))
+	res <<= 8
+	res |= uint32(tableMul(x1, y1))
+	res <<= 8
+	res |= uint32(tableMul(x0, y0))
+
+	return res
+}
