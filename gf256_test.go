@@ -61,10 +61,45 @@ func TestSimpleMul(t *testing.T) {
 		x := uint8(3)
 		assert.Equal(t, uint8(5), simpleMul(x, 3))
 		assert.Equal(t, uint8(5), simpleExp(x, 2))
+		assert.Equal(t, uint8(1), simpleExp(x, 0))
 		assert.Equal(t, uint8(15), simpleExp(x, 3))
 		assert.Equal(t, uint8(129), simpleExp(x, 88))
 		assert.Equal(t, uint8(203), simpleExp(x, 205))
 		assert.Equal(t, uint8(1), simpleExp(x, 255))
 		assert.Equal(t, uint8(246), simpleExp(x, 254))
+		assert.Equal(t, uint8(121), simpleExp(x, 212))
+		assert.Equal(t, uint8(129), simpleExp(x, 255+88))
 	})
+
+	t.Run("log table size", func(t *testing.T) {
+		assert.Equal(t, 255, len(globalLogTable))
+		assert.Equal(t, 255, len(globalExpTable))
+	})
+}
+
+func TestFastMul(t *testing.T) {
+	assert.Equal(t, simpleMul(1, 2), fastMul(1, 2))
+	assert.Equal(t, simpleMul(3, 2), fastMul(3, 2))
+	assert.Equal(t, simpleMul(3, 3), fastMul(3, 3))
+	assert.Equal(t, simpleMul(3, 3), fastMul(3, 3))
+}
+
+func TestFastMul_Ex1(t *testing.T) {
+	assert.Equal(t, simpleMul(2, 13), fastMul(2, 13))
+}
+
+func TestFastMul_All(t *testing.T) {
+	for a := 0; a < 256; a++ {
+		for b := 0; b < 256; b++ {
+			x := uint8(a)
+			y := uint8(b)
+
+			v1 := simpleMul(x, y)
+			v2 := fastMul(x, y)
+			if v1 != v2 {
+				t.Errorf("Mismatch x, y = %d %d", x, y)
+				return
+			}
+		}
+	}
 }
