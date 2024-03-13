@@ -122,3 +122,26 @@ func tableMul4(a, b uint32) uint32 {
 
 	return res
 }
+
+func simpleInv(x uint8) uint8 {
+	logX := globalLogTable[x]
+	if logX == 0 {
+		return 1
+	}
+	return globalExpTable[255-logX]
+}
+
+func computeInvTable() []uint8 {
+	result := make([]uint8, 256)
+	for i := 1; i < 256; i++ {
+		x := uint8(i)
+		result[i] = simpleInv(x)
+	}
+	return result
+}
+
+var invTable = computeInvTable()
+
+func tableInv(x uint8) uint8 {
+	return invTable[x]
+}

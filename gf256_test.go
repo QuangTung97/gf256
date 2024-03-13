@@ -134,6 +134,28 @@ func TestTableMul_All(t *testing.T) {
 	}
 }
 
+func TestSimpleInv_All(t *testing.T) {
+	for a := 1; a < 256; a++ {
+		x := uint8(a)
+		y := simpleMul(x, simpleInv(x))
+		if y != 1 {
+			t.Errorf("Mismatch x = %d, y = %d", x, y)
+			return
+		}
+	}
+}
+
+func TestTableInv_All(t *testing.T) {
+	for a := 1; a < 256; a++ {
+		x := uint8(a)
+		y := simpleMul(x, tableInv(x))
+		if y != 1 {
+			t.Errorf("Mismatch x = %d, y = %d", x, y)
+			return
+		}
+	}
+}
+
 func BenchmarkFastMultiWithLogTable(b *testing.B) {
 	arr1 := make([]byte, 4<<20)
 	arr2 := make([]byte, 4<<20)
