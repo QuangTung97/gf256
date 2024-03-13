@@ -41,8 +41,8 @@ func simpleMul(a, b uint8) uint8 {
 	return uint8(sum)
 }
 
-func computeLogTable() map[uint8]uint8 {
-	table := map[uint8]uint8{}
+func computeLogTable() []uint8 {
+	table := make([]uint8, 256)
 	x := uint8(3)
 	for i := 0; i < 255; i++ {
 		v := simpleExp(x, uint16(i))
@@ -51,8 +51,8 @@ func computeLogTable() map[uint8]uint8 {
 	return table
 }
 
-func computeAntiLogTable() map[uint8]uint8 {
-	table := map[uint8]uint8{}
+func computeAntiLogTable() []uint8 {
+	table := make([]uint8, 255)
 	x := uint8(3)
 	for i := 0; i < 255; i++ {
 		v := simpleExp(x, uint16(i))

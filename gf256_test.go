@@ -72,8 +72,11 @@ func TestSimpleMul(t *testing.T) {
 	})
 
 	t.Run("log table size", func(t *testing.T) {
-		assert.Equal(t, 255, len(globalLogTable))
+		assert.Equal(t, 256, len(globalLogTable))
+		assert.Equal(t, []byte{0, 0, 0x19, 1}, globalLogTable[:4])
+
 		assert.Equal(t, 255, len(globalExpTable))
+		assert.Equal(t, []byte{1, 3, 5, 15, 17, 0x33}, globalExpTable[:6])
 	})
 }
 
